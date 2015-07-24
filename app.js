@@ -74,7 +74,9 @@ function calcScoreOfFrame(frame) {
             votes.push(v);
     });
     // 投票してて、且つ、参加できる人数をスコアとします。
-    return votes.length;
+    return votes.length
+        + (conflictSpeakerCount == 0 ? +1 : 0)
+        + (conflictCount == 0 ? +1 : 0);
 }
 /** 1タイムテーブル案のスコアを返します。(そのタイムテーブル案が抱えるすべてのコマの各スコアの合計です) */
 function calcScore(plan) {
@@ -86,6 +88,7 @@ var app;
 (function (app) {
     // 参考情報として、全投稿テーマを、投票の多い順にならべてコンソールに表示します。
     var sortedThemes = themes.sort(function (a, b) { return b.votes.length - a.votes.length; });
+    console.log('[参考情報] 全投稿テーマを投票の多い順に並べ替えして以下に出力します。');
     console.dir(sortedThemes);
     // 全投稿テーマをもとに、総当たりでコマ(frame)のすべての組み合わせを生成します。
     var frames = makeFrames(themes);
@@ -97,6 +100,8 @@ var app;
     plans.forEach(function (plan) { return calcScore(plan); });
     // スコアの大きい順に並べ替えて、コンソールに表示します。
     plans = plans.sort(function (a, b) { return b.score - a.score; });
+    console.log('----');
+    console.log('以下に、スコアの高い順に、タイムテーブル案を出力します。');
     console.dir(plans);
 })(app || (app = {}));
 //# sourceMappingURL=app.js.map

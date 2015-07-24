@@ -95,7 +95,10 @@ function calcScoreOfFrame(frame: IFrame) {
         // - ある同じコマ内で、スピーカーの自分担当の他方が、そのスピーカーが聴衆として参加したかったテーマであった場合
         // - 同じコマ内で、両方のテーマに投票していて、いずれか片方のみの参加を迫られる場合
 
-        //+ (conflictSpeakerCount == 0 ? +1 : 0)
+        // 減点方式だと、ただ単に組み合わせが悪い案と同じレベルに成り下がってしまうだけなので、
+        // そうではなく、ペナルティが発生していなければより望ましいということで加点方式にしてみる。
+        + (conflictSpeakerCount == 0 ? +1 : 0)
+        + (conflictCount == 0 ? +1 : 0)
         //- conflictSpeakerCount
         //- conflictCount
         ;
@@ -111,6 +114,7 @@ function calcScore(plan: IPlan) {
 module app {
     // 参考情報として、全投稿テーマを、投票の多い順にならべてコンソールに表示します。
     var sortedThemes = themes.sort((a, b) => b.votes.length - a.votes.length);
+    console.log('[参考情報] 全投稿テーマを投票の多い順に並べ替えして以下に出力します。');
     console.dir(sortedThemes);
 
     // 全投稿テーマをもとに、総当たりでコマ(frame)のすべての組み合わせを生成します。
@@ -126,6 +130,7 @@ module app {
 
     // スコアの大きい順に並べ替えて、コンソールに表示します。
     plans = plans.sort((a, b) => b.score - a.score);
-
+    console.log('----');
+    console.log('以下に、スコアの高い順に、タイムテーブル案を出力します。');
     console.dir(plans);
 }
