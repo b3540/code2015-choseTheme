@@ -84,14 +84,15 @@ var themes = [
             'れいさ'
         ]
     },
-    {
-        title: 'Node.js × TypeScript × MongoDB × Swagger で楽しい REST API 開発 (Hands-on)',
-        speaker: 'れいさ',
-        votes: [
-            'rakuda_daraku',
-            'tututen'
-        ]
-    },
+    // れいささんが drop.
+    //{
+    //    title: 'Node.js × TypeScript × MongoDB × Swagger で楽しい REST API 開発 (Hands-on)',
+    //    speaker: 'れいさ',
+    //    votes: [
+    //        'rakuda_daraku',
+    //        'tututen'
+    //    ]
+    //},
     {
         title: '脆弱性を探せ！',
         speaker: 'れいさ',
