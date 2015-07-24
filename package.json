@@ -1,0 +1,25 @@
+{
+  "name": "code2015-chose-theme",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "http-server",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codejp/code2015-choseTheme.git"
+  },
+  "author": "",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/codejp/code2015-choseTheme/issues"
+  },
+  "homepage": "https://github.com/codejp/code2015-choseTheme",
+  "devDependencies": {
+    "http-server": "^0.8.0",
+    "typescript": "^1.5.3"
+  }
+}
