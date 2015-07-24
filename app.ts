@@ -97,8 +97,8 @@ function calcScoreOfFrame(frame: IFrame) {
 
         // 減点方式だと、ただ単に組み合わせが悪い案と同じレベルに成り下がってしまうだけなので、
         // そうではなく、ペナルティが発生していなければより望ましいということで加点方式にしてみる。
-        + (conflictSpeakerCount == 0 ? +1 : 0)
-        + (conflictCount == 0 ? +1 : 0)
+        //+ (conflictSpeakerCount == 0 ? +1 : 0)
+        //+ (conflictCount == 0 ? +1 : 0)
         //- conflictSpeakerCount
         //- conflictCount
         ;

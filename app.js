@@ -74,9 +74,7 @@ function calcScoreOfFrame(frame) {
             votes.push(v);
     });
     // 投票してて、且つ、参加できる人数をスコアとします。
-    return votes.length
-        + (conflictSpeakerCount == 0 ? +1 : 0)
-        + (conflictCount == 0 ? +1 : 0);
+    return votes.length;
 }
 /** 1タイムテーブル案のスコアを返します。(そのタイムテーブル案が抱えるすべてのコマの各スコアの合計です) */
 function calcScore(plan) {
