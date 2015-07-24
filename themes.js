@@ -3,7 +3,10 @@ var themes = [
     {
         title: 'jQuery入門編',
         speaker: 'sasuke',
-        votes: ['chack411', 'miso_soup3']
+        votes: [
+            'chack411',
+            'miso_soup3',
+            'bambi']
     },
     {
         title: 'Raspberry Pi を使って、Web 技術を UI にして、スマホからLEDやモーターなどを操作してみる',
@@ -99,7 +102,8 @@ var themes = [
         votes: [
             'DarkCrash3',
             'rakuda_daraku',
-            'tututen'
+            'tututen',
+            'bambi'
         ]
     },
     {
