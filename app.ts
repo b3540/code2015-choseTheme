@@ -1,4 +1,4 @@
-/** 1コマを表す構造です。 */﻿
+/** 1コマを表す構造です。 */
 interface IFrame {
     theme1: ITheme;
     theme2: ITheme;
@@ -91,16 +91,16 @@ function calcScoreOfFrame(frame: IFrame) {
     // 投票してて、且つ、参加できる人数をスコアとします。
     return votes.length
         
-        // 以下のケースをどういうペナルティとするか試行錯誤...。
-        // - ある同じコマ内で、スピーカーの自分担当の他方が、そのスピーカーが聴衆として参加したかったテーマであった場合
-        // - 同じコマ内で、両方のテーマに投票していて、いずれか片方のみの参加を迫られる場合
+    // 以下のケースをどういうペナルティとするか試行錯誤...。
+    // - ある同じコマ内で、スピーカーの自分担当の他方が、そのスピーカーが聴衆として参加したかったテーマであった場合
+    // - 同じコマ内で、両方のテーマに投票していて、いずれか片方のみの参加を迫られる場合
 
-        // 減点方式だと、ただ単に組み合わせが悪い案と同じレベルに成り下がってしまうだけなので、
-        // そうではなく、ペナルティが発生していなければより望ましいということで加点方式にしてみる。
-        //+ (conflictSpeakerCount == 0 ? +1 : 0)
-        //+ (conflictCount == 0 ? +1 : 0)
-        //- conflictSpeakerCount
-        //- conflictCount
+    // 減点方式だと、ただ単に組み合わせが悪い案と同じレベルに成り下がってしまうだけなので、
+    // そうではなく、ペナルティが発生していなければより望ましいということで加点方式にしてみる。
+    //+ (conflictSpeakerCount == 0 ? +1 : 0)
+    //+ (conflictCount == 0 ? +1 : 0)
+    //- conflictSpeakerCount
+    //- conflictCount
         ;
 }
 
@@ -112,25 +112,43 @@ function calcScore(plan: IPlan) {
 }
 
 module app {
-    // 参考情報として、全投稿テーマを、投票の多い順にならべてコンソールに表示します。
-    var sortedThemes = themes.sort((a, b) => b.votes.length - a.votes.length);
-    console.log('[参考情報] 全投稿テーマを投票の多い順に並べ替えして以下に出力します。');
-    console.dir(sortedThemes);
 
-    // 全投稿テーマをもとに、総当たりでコマ(frame)のすべての組み合わせを生成します。
-    var frames = makeFrames(themes);
+    $.get(
+    //url: 'http://www.codejapan.jp/2015/api/1.0/offer/',
+        '/offer'
+        ).done(data => {
+            var themes: ITheme[] = data.map(theme => {
+                return {
+                    title: theme.title,
+                    speaker: theme.speaker.nickname,
+                    votes: theme.voters.map(vorter => vorter.nickname)
+                }
+            })
+            console.dir(themes);
+            doChoseTheme(themes.filter(t => t.title != 'CodeJP ならびに Code in 定山渓温泉について'));
+        });
 
-    // さらにそのコマの集合をもとに、4コマの組み合わせ = タイムテーブル案を、総当たりで生成します。
-    // そのうち、同じテーマが重複して現れていたり、同じスピーカーが同一時間に重複していたりする不整合をfilterで除外します。
-    var plans = makePlans(frames)
-        .filter(notDupulicated);
+    function doChoseTheme(themes: ITheme[]) {
+        // 参考情報として、全投稿テーマを、投票の多い順にならべてコンソールに表示します。
+        var sortedThemes = themes.sort((a, b) => b.votes.length - a.votes.length);
+        console.log('[参考情報] 全投稿テーマを投票の多い順に並べ替えして以下に出力します。');
+        console.dir(sortedThemes);
 
-    // そうして求めたタイムテーブル案に、投票し且つ参加できる人数によるスコアを求めて score プロパティに設定します。
-    plans.forEach(plan => calcScore(plan));
+        // 全投稿テーマをもとに、総当たりでコマ(frame)のすべての組み合わせを生成します。
+        var frames = makeFrames(themes);
 
-    // スコアの大きい順に並べ替えて、コンソールに表示します。
-    plans = plans.sort((a, b) => b.score - a.score);
-    console.log('----');
-    console.log('以下に、スコアの高い順に、タイムテーブル案を出力します。');
-    console.dir(plans);
+        // さらにそのコマの集合をもとに、4コマの組み合わせ = タイムテーブル案を、総当たりで生成します。
+        // そのうち、同じテーマが重複して現れていたり、同じスピーカーが同一時間に重複していたりする不整合をfilterで除外します。
+        var plans = makePlans(frames)
+            .filter(notDupulicated);
+
+        // そうして求めたタイムテーブル案に、投票し且つ参加できる人数によるスコアを求めて score プロパティに設定します。
+        plans.forEach(plan => calcScore(plan));
+
+        // スコアの大きい順に並べ替えて、コンソールに表示します。
+        plans = plans.sort((a, b) => b.score - a.score);
+        console.log('----');
+        console.log('以下に、スコアの高い順に、タイムテーブル案を出力します。');
+        console.dir(plans);
+    }
 }
