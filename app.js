@@ -84,24 +84,7 @@ function calcScore(plan) {
 }
 var app;
 (function (app) {
-    $.get(
-    //url: 'http://www.codejapan.jp/2015/api/1.0/offer/',
-    '/offer').done(function (data) {
-        var themes = data.map(function (theme) {
-            return {
-                title: theme.title,
-                speaker: theme.speaker.nickname,
-                votes: theme.voters.map(function (vorter) { return vorter.nickname; })
-            };
-        });
-        console.dir(themes);
-        doChoseTheme(themes.filter(function (t) { return t.title != 'CodeJP ならびに Code in 定山渓温泉について'; }));
-    });
     function doChoseTheme(themes) {
-        // 参考情報として、全投稿テーマを、投票の多い順にならべてコンソールに表示します。
-        var sortedThemes = themes.sort(function (a, b) { return b.votes.length - a.votes.length; });
-        console.log('[参考情報] 全投稿テーマを投票の多い順に並べ替えして以下に出力します。');
-        console.dir(sortedThemes);
         // 全投稿テーマをもとに、総当たりでコマ(frame)のすべての組み合わせを生成します。
         var frames = makeFrames(themes);
         // さらにそのコマの集合をもとに、4コマの組み合わせ = タイムテーブル案を、総当たりで生成します。
@@ -110,11 +93,34 @@ var app;
             .filter(notDupulicated);
         // そうして求めたタイムテーブル案に、投票し且つ参加できる人数によるスコアを求めて score プロパティに設定します。
         plans.forEach(function (plan) { return calcScore(plan); });
-        // スコアの大きい順に並べ替えて、コンソールに表示します。
-        plans = plans.sort(function (a, b) { return b.score - a.score; });
-        console.log('----');
-        console.log('以下に、スコアの高い順に、タイムテーブル案を出力します。');
-        console.dir(plans);
+        // スコアの大きい順に並べ替えて、戻り値として返します。
+        return plans.sort(function (a, b) { return b.score - a.score; });
     }
+    var MainController = (function () {
+        function MainController($scope) {
+            var _this = this;
+            $.get('http://www.codejapan.jp/2015/api/1.0/offer/')
+                .done(function (data) {
+                var themes = data.map(function (theme) {
+                    return {
+                        title: theme.title,
+                        speaker: theme.speaker.nickname,
+                        votes: theme.voters.map(function (vorter) { return vorter.nickname; })
+                    };
+                });
+                themes = themes
+                    .filter(function (t) { return t.title != 'CodeJP ならびに Code in 定山渓温泉について'; })
+                    .filter(function (t) { return t.title != '脆弱性を探せ！'; });
+                _this.plans = doChoseTheme(themes);
+                _this.sortedThemes = themes.sort(function (a, b) { return b.votes.length - a.votes.length; });
+                $scope.$apply();
+            });
+        }
+        return MainController;
+    })();
+    app.MainController = MainController;
+    angular
+        .module('app', [])
+        .controller('mainController', MainController);
 })(app || (app = {}));
 //# sourceMappingURL=app.js.map

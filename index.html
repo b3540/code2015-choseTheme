@@ -7,8 +7,31 @@
     <link rel="stylesheet" href="app.css" type="text/css" />
 </head>
 <body>
-    <p>Ctrl + Option + I (又は F12) で開発者ツールのコンソールを開いてください。</p>
-    <p>開発者コンソールにテーマ選定結果が表示されます。</p>
+    <div ng-app="app" ng-controller="mainController as ctrl">
+
+        <p>[参考情報] 全投稿テーマを投票の多い順に並べ替えして以下に出力します。</p>
+
+        <div ng-repeat="theme in ctrl.sortedThemes">
+            <div>
+                <span>{{theme.votes.length}}票</span>
+                <span>{{theme.title}}</span>
+            </div>
+
+        </div>
+
+        <p>以下に、スコアの高い順に、タイムテーブル案を出力します。</p>
+
+        <div ng-repeat="plan in ctrl.plans" class="plan">
+            <div class="caption">プラン {{$index+1}} - スコア {{plan.score}}</div>
+            <div ng-repeat="frame in plan.frames" class="frame">
+                <div>{{$index+1}}コマ目</div>
+                <div class="themes">
+                    <div class="theme"><span class="header">Side A:</span> <span class="title">{{frame.theme1.title}}</span></div>
+                    <div class="theme"><span class="header">Side B:</span> <span class="title">{{frame.theme2.title}}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="Scripts/jquery.min.js"></script>
     <script src="Scripts/angular.min.js"></script>

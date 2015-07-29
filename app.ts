@@ -1,3 +1,13 @@
+/** 投稿テーマとそのスピーカー、投票者を表す構造です。 */
+﻿interface ITheme {
+    /** テーマのタイトル */
+    title: string;
+    /** スピーカー */
+    speaker: string;
+    /** 投票者 */
+    votes: string[];
+}
+
 /** 1コマを表す構造です。 */
 interface IFrame {
     theme1: ITheme;
@@ -113,26 +123,7 @@ function calcScore(plan: IPlan) {
 
 module app {
 
-    $.get(
-    //url: 'http://www.codejapan.jp/2015/api/1.0/offer/',
-        '/offer'
-        ).done(data => {
-            var themes: ITheme[] = data.map(theme => {
-                return {
-                    title: theme.title,
-                    speaker: theme.speaker.nickname,
-                    votes: theme.voters.map(vorter => vorter.nickname)
-                }
-            })
-            console.dir(themes);
-            doChoseTheme(themes.filter(t => t.title != 'CodeJP ならびに Code in 定山渓温泉について'));
-        });
-
-    function doChoseTheme(themes: ITheme[]) {
-        // 参考情報として、全投稿テーマを、投票の多い順にならべてコンソールに表示します。
-        var sortedThemes = themes.sort((a, b) => b.votes.length - a.votes.length);
-        console.log('[参考情報] 全投稿テーマを投票の多い順に並べ替えして以下に出力します。');
-        console.dir(sortedThemes);
+    function doChoseTheme(themes: ITheme[]): IPlan[] {
 
         // 全投稿テーマをもとに、総当たりでコマ(frame)のすべての組み合わせを生成します。
         var frames = makeFrames(themes);
@@ -145,10 +136,39 @@ module app {
         // そうして求めたタイムテーブル案に、投票し且つ参加できる人数によるスコアを求めて score プロパティに設定します。
         plans.forEach(plan => calcScore(plan));
 
-        // スコアの大きい順に並べ替えて、コンソールに表示します。
-        plans = plans.sort((a, b) => b.score - a.score);
-        console.log('----');
-        console.log('以下に、スコアの高い順に、タイムテーブル案を出力します。');
-        console.dir(plans);
+        // スコアの大きい順に並べ替えて、戻り値として返します。
+        return plans.sort((a, b) => b.score - a.score);
     }
+
+    export class MainController {
+        sortedThemes: ITheme[];
+        plans: IPlan[];
+
+        constructor($scope: ng.IScope) {
+            $.get('http://www.codejapan.jp/2015/api/1.0/offer/')
+                .done(data => {
+                    var themes: ITheme[] = data.map(theme => {
+                        return {
+                            title: theme.title,
+                            speaker: theme.speaker.nickname,
+                            votes: theme.voters.map(vorter => vorter.nickname)
+                        }
+                    })
+
+                    themes = themes
+                        .filter(t => t.title != 'CodeJP ならびに Code in 定山渓温泉について')
+                        .filter(t => t.title != '脆弱性を探せ！');
+
+                    this.plans = doChoseTheme(themes);
+
+                    this.sortedThemes = themes.sort((a, b) => b.votes.length - a.votes.length);
+
+                    $scope.$apply();
+                });
+        }
+    }
+
+    angular
+        .module('app', [])
+        .controller('mainController', MainController);
 }

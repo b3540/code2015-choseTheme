@@ -1,7 +1,35 @@
 ﻿body {
     font-family: 'Segoe UI', sans-serif;
+    font-size: 10pt;
 }
 
-span {
+.plan {
+    margin-bottom: 1rem;
+}
+
+    .plan > .caption {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+.frame {
+    margin-left: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.themes {
+    margin-left: 1rem;
+}
+
+.theme {
+    margin-left: 3rem;
+    text-indent: -3rem;
+}
+
+.themes .header {
+    color: #666;
     font-style: italic;
+}
+
+.themes .title {
 }
